@@ -261,6 +261,102 @@
   .closing .contact .k { font-size: 12px; opacity: 0.7; letter-spacing: 0.1em; text-transform: uppercase; }
   .closing .contact .v { font-size: 18px; margin-top: 4px; font-weight: 500; }
   .closing .accent-bar { width: 80px; height: 4px; background: var(--accent); margin-bottom: 24px; }
+
+  /* ========== Mobile / narrow viewports ========== */
+  @media (max-width: 900px), (orientation: portrait) and (max-width: 1100px) {
+    body { background: #f0f0f0; }
+    .deck {
+      position: static;
+      display: block;
+      min-height: 100vh;
+    }
+    .stage {
+      width: 100%; height: auto;
+      transform: none !important;
+    }
+    .slide {
+      position: relative; inset: auto;
+      width: 100%; height: auto; min-height: 100vh;
+      box-shadow: none;
+      border-bottom: 4px solid var(--bg-2);
+    }
+    .slide.active { display: flex; flex-direction: column; }
+
+    .slide-head { padding: 18px 20px 12px; }
+    .slide-head h2 { font-size: 20px; }
+    .slide-head .eyebrow { font-size: 11px; }
+    .slide-body { padding: 20px; }
+    .slide-foot { padding: 8px 20px; font-size: 10px; }
+
+    /* Cover/Closing reflow */
+    .cover { padding: 48px 28px; min-height: 100vh; }
+    .cover h1 { font-size: clamp(28px, 8vw, 40px); }
+    .cover .sub { font-size: 16px; }
+    .cover .meta { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .cover .meta div .v { font-size: 15px; }
+    .closing { padding: 48px 28px; min-height: 100vh; }
+    .closing h1 { font-size: clamp(36px, 10vw, 48px); }
+    .closing .contact { grid-template-columns: 1fr; gap: 18px; margin-top: 24px; }
+    .closing .contact .v { font-size: 16px; }
+    .closing .sub { font-size: 16px !important; }
+
+    /* Grids collapse */
+    .grid2, .grid3, .grid4 { grid-template-columns: 1fr; gap: 14px; }
+    .row { flex-direction: column; gap: 16px; }
+    .asismap { grid-template-columns: 1fr; gap: 12px; }
+
+    /* Typography */
+    .lead { font-size: 15px; }
+    h3 { font-size: 16px; }
+    li, p { font-size: 14px; }
+    .small { font-size: 12px; }
+    .kpi .v { font-size: 18px; }
+
+    /* Tables — horizontal scroll if needed */
+    .slide-body { overflow-x: hidden; }
+    table.t { font-size: 12px; display: block; overflow-x: auto; white-space: nowrap; }
+    table.t.compact th, table.t.compact td { font-size: 12px; padding: 6px 8px; white-space: normal; }
+    .solfit { font-size: 11px; }
+
+    /* Timeline becomes vertical list */
+    .timeline {
+      grid-template-columns: 1fr; gap: 0;
+      margin-top: 12px; position: relative;
+    }
+    .timeline::before {
+      top: 0; bottom: 0; left: 8px; width: 2px; height: auto; right: auto;
+    }
+    .timeline .step {
+      padding: 8px 0 8px 32px; text-align: left;
+    }
+    .timeline .step::before {
+      top: 12px; left: 0; transform: none;
+      width: 16px; height: 16px;
+    }
+    .timeline .step .date, .timeline .step .label { font-size: 13px; }
+
+    /* Nav bar bigger touch targets */
+    .nav { bottom: 16px; right: 50%; transform: translateX(50%); padding: 10px 14px; }
+    .nav button { width: 36px; height: 36px; border-radius: 18px; font-size: 18px; }
+    .pageind { font-size: 14px; }
+
+    /* Slide head pageno aligns */
+    .slide-head { flex-wrap: wrap; }
+    .slide-head .pageno { font-size: 11px; }
+
+    /* Cards padding */
+    .card { padding: 14px 16px; }
+    .cons { padding: 12px 14px; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 380px) {
+    .slide-head h2 { font-size: 18px; }
+    .cover h1 { font-size: 26px; }
+    .closing h1 { font-size: 32px; }
+    .slide-body { padding: 16px; }
+    .cover, .closing { padding: 36px 20px; }
+  }
 </style>
 </head>
 <body>
@@ -790,18 +886,28 @@
   const total = slides.length;
   let idx = 0;
 
+  const mql = window.matchMedia('(max-width: 900px), (orientation: portrait) and (max-width: 1100px)');
+  function isMobile() { return mql.matches; }
+
   function fit() {
+    if (isMobile()) {
+      stage.style.transform = '';
+      return;
+    }
     const s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
     stage.style.transform = 'scale(' + s + ')';
   }
   window.addEventListener('resize', fit);
+  mql.addEventListener?.('change', fit);
   fit();
+
   function go(n) {
     idx = Math.max(0, Math.min(total - 1, n));
     slides.forEach((s, i) => s.classList.toggle('active', i === idx));
     bar.style.width = ((idx + 1) / total * 100) + '%';
     ind.textContent = (idx + 1) + ' / ' + total;
     if (location.hash !== '#' + (idx + 1)) history.replaceState(null, '', '#' + (idx + 1));
+    if (isMobile()) window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
   }
   document.getElementById('prev').onclick = () => go(idx - 1);
   document.getElementById('next').onclick = () => go(idx + 1);
@@ -812,6 +918,23 @@
     else if (e.key === 'End') go(total - 1);
     else if (/^[1-9]$/.test(e.key)) go(parseInt(e.key, 10) - 1);
   });
+
+  // Touch swipe — horizontal swipe changes slide on mobile
+  let tx = 0, ty = 0, tt = 0;
+  document.addEventListener('touchstart', (e) => {
+    const t = e.changedTouches[0];
+    tx = t.clientX; ty = t.clientY; tt = Date.now();
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    if (!isMobile()) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - tx, dy = t.clientY - ty, dt = Date.now() - tt;
+    if (dt > 600) return;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) go(idx + 1); else go(idx - 1);
+    }
+  }, { passive: true });
+
   // hash deep-link
   const h = parseInt(location.hash.replace('#',''), 10);
   go(Number.isFinite(h) && h >= 1 ? h - 1 : 0);

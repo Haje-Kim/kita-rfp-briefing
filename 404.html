@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1280, initial-scale=1" />
+<title>차세대 AX무역플랫폼 구축사업(1단계) — 사업설명회</title>
+<style>
+  :root {
+    --navy: #002C5F;
+    --navy-2: #1B3F7A;
+    --accent: #00A8E1;
+    --gold: #C8A24B;
+    --ink: #1A1A1A;
+    --ink-2: #4A4A4A;
+    --muted: #8A8A8A;
+    --line: #D9D9D9;
+    --bg: #F4F6F9;
+    --bg-2: #ECEEF2;
+    --white: #FFFFFF;
+    --danger: #B3261E;
+    --ok: #1F7A4D;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+    color: var(--ink);
+    background: #2a2a2a;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Deck container */
+  .deck {
+    width: 100vw; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .slide {
+    position: relative;
+    width: min(100vw, calc(100vh * 16 / 9));
+    height: min(100vh, calc(100vw * 9 / 16));
+    background: var(--white);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    display: none;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+
+  /* Header / footer chrome */
+  .slide-head {
+    flex: 0 0 auto;
+    padding: 28px 56px 18px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+  }
+  .slide-head .eyebrow {
+    font-size: 13px; letter-spacing: 0.12em; color: var(--accent);
+    font-weight: 600; text-transform: uppercase;
+  }
+  .slide-head h2 {
+    margin: 6px 0 0; font-size: 28px; font-weight: 700; color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .slide-head .pageno {
+    font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .slide-body {
+    flex: 1 1 auto;
+    padding: 36px 56px 28px;
+    display: flex; flex-direction: column;
+    min-height: 0;
+  }
+  .slide-foot {
+    flex: 0 0 auto;
+    padding: 10px 56px;
+    background: var(--bg);
+    font-size: 11px; color: var(--muted);
+    display: flex; justify-content: space-between;
+    border-top: 1px solid var(--line);
+  }
+
+  /* Cover slide */
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 55%, #2A5599 100%);
+    color: var(--white);
+    padding: 80px 80px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .cover .brand {
+    font-size: 14px; letter-spacing: 0.2em; opacity: 0.85;
+  }
+  .cover h1 {
+    font-size: 56px; font-weight: 800; margin: 12px 0 0; line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .cover .sub {
+    font-size: 22px; margin-top: 14px; opacity: 0.9; font-weight: 400;
+  }
+  .cover .meta {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    border-top: 1px solid rgba(255,255,255,0.25);
+    padding-top: 24px;
+  }
+  .cover .meta div .k { font-size: 12px; opacity: 0.65; letter-spacing: 0.05em; }
+  .cover .meta div .v { font-size: 18px; margin-top: 4px; font-weight: 600; }
+  .cover .accent-bar {
+    width: 80px; height: 4px; background: var(--accent); margin-bottom: 24px;
+  }
+
+  /* Typography utilities */
+  h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin: 0 0 10px; }
+  p  { font-size: 16px; line-height: 1.55; margin: 0 0 8px; color: var(--ink-2); }
+  ul { margin: 0; padding-left: 20px; }
+  li { font-size: 15px; line-height: 1.6; color: var(--ink-2); margin-bottom: 4px; }
+  .lead { font-size: 18px; color: var(--ink); line-height: 1.55; font-weight: 500; }
+  .small { font-size: 13px; color: var(--muted); }
+
+  /* Layout helpers */
+  .row { display: flex; gap: 24px; }
+  .col { flex: 1 1 0; min-width: 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  /* Card */
+  .card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 18px 20px;
+  }
+  .card.hl { background: var(--white); border-left: 4px solid var(--accent); }
+  .card .num {
+    display: inline-block; min-width: 28px; height: 28px; line-height: 28px;
+    text-align: center; background: var(--navy); color: var(--white);
+    font-weight: 700; border-radius: 50%; font-size: 13px; margin-right: 8px;
+  }
+  .kpi {
+    background: var(--white); border: 1px solid var(--line); border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .kpi .k { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  .kpi .v { font-size: 22px; font-weight: 700; color: var(--navy); margin-top: 4px; }
+
+  /* Tables */
+  table.t {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+  }
+  table.t th, table.t td {
+    padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left;
+    vertical-align: top;
+  }
+  table.t th {
+    background: var(--bg-2); color: var(--navy); font-weight: 700;
+    border-bottom: 2px solid var(--navy);
+  }
+  table.t td.num, table.t th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.t tr:last-child td { border-bottom: none; }
+  table.t.compact th, table.t.compact td { padding: 7px 10px; font-size: 13px; }
+
+  /* Badges */
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .badge.si { background: #E8F1FB; color: #1B5FB2; }
+  .badge.sol { background: #FFF4E0; color: #8A5A00; }
+  .badge.all { background: #E8F5EC; color: var(--ok); }
+
+  /* Roadmap timeline */
+  .timeline {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 0;
+    position: relative; margin-top: 18px;
+  }
+  .timeline::before {
+    content: ""; position: absolute; top: 22px; left: 0; right: 0; height: 2px;
+    background: var(--line);
+  }
+  .timeline .step {
+    position: relative; padding-top: 50px; text-align: center;
+  }
+  .timeline .step::before {
+    content: ""; position: absolute; top: 14px; left: 50%;
+    transform: translateX(-50%);
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--white); border: 3px solid var(--navy);
+  }
+  .timeline .step.now::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 6px rgba(0,168,225,0.15); }
+  .timeline .step .date { font-size: 12px; color: var(--muted); }
+  .timeline .step .label { font-size: 13px; font-weight: 700; color: var(--navy); margin-top: 2px; }
+
+  /* AS-IS map */
+  .asismap {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+  }
+  .group {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    padding: 14px;
+  }
+  .group h4 {
+    margin: 0 0 10px; font-size: 13px; color: var(--navy); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .group ul { padding-left: 16px; }
+  .group li { font-size: 13px; line-height: 1.55; margin-bottom: 2px; }
+
+  /* Architecture principle blocks */
+  .princ {
+    background: var(--white); border: 1px solid var(--line); border-radius: 6px;
+    padding: 14px 16px; border-top: 3px solid var(--navy);
+  }
+  .princ .n { font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 0.1em; }
+  .princ .t { font-size: 15px; font-weight: 700; color: var(--ink); margin: 4px 0 6px; }
+  .princ .d { font-size: 12px; color: var(--ink-2); line-height: 1.5; }
+
+  /* Solution-fit table */
+  .solfit td.area { font-weight: 600; color: var(--navy); width: 22%; }
+  .solfit td.tag  { width: 16%; }
+
+  /* Constraint cards */
+  .cons {
+    background: #FFF8EE; border-left: 4px solid var(--gold);
+    padding: 14px 16px; border-radius: 0 4px 4px 0;
+  }
+  .cons h4 { margin: 0 0 4px; color: #8A5A00; font-size: 14px; }
+  .cons p  { margin: 0; font-size: 13px; color: var(--ink-2); }
+
+  /* Progress + nav */
+  .progress {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 3px;
+    background: rgba(255,255,255,0.1); z-index: 30;
+  }
+  .progress > i { display: block; height: 100%; background: var(--accent); transition: width 0.25s; }
+  .nav {
+    position: fixed; bottom: 12px; right: 16px; z-index: 30;
+    display: flex; gap: 6px; align-items: center;
+    background: rgba(0,0,0,0.5); padding: 6px 10px; border-radius: 20px;
+    color: #fff; font-size: 12px;
+  }
+  .nav button {
+    background: transparent; border: 1px solid rgba(255,255,255,0.4); color: #fff;
+    width: 24px; height: 24px; border-radius: 12px; cursor: pointer;
+    font-size: 12px; padding: 0;
+  }
+  .nav button:hover { background: rgba(255,255,255,0.15); }
+  .pageind { font-variant-numeric: tabular-nums; min-width: 44px; text-align: center; }
+
+  /* Q&A slide */
+  .closing {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+    color: var(--white);
+    padding: 80px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .closing h1 { font-size: 64px; margin: 0 0 18px; letter-spacing: -0.02em; }
+  .closing .contact { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; max-width: 720px; }
+  .closing .contact .k { font-size: 12px; opacity: 0.7; letter-spacing: 0.1em; text-transform: uppercase; }
+  .closing .contact .v { font-size: 18px; margin-top: 4px; font-weight: 500; }
+  .closing .accent-bar { width: 80px; height: 4px; background: var(--accent); margin-bottom: 24px; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- ========== Slide 1: Cover ========== -->
+<section class="slide active cover" data-slide="1">
+  <div>
+    <div class="accent-bar"></div>
+    <div class="brand">한국무역협회 · KITA</div>
+    <h1>차세대 AX무역플랫폼<br/>구축사업(1단계)</h1>
+    <div class="sub">제안 희망 SI·솔루션 업체 사업설명회</div>
+  </div>
+  <div class="meta">
+    <div><div class="k">일시</div><div class="v">2026. 6. 2.(월) 14:00</div></div>
+    <div><div class="k">장소</div><div class="v">KITA 51층 중회의실</div></div>
+    <div><div class="k">주관</div><div class="v">무역플랫폼실 / TF</div></div>
+    <div><div class="k">발표자</div><div class="v">차세대무역플랫폼 TF</div></div>
+  </div>
+</section>
+
+<!-- ========== Slide 2: 30초 요약 ========== -->
+<section class="slide" data-slide="2">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Executive Summary</div>
+      <h2>30초 요약 — 이 사업, 한 장</h2>
+    </div>
+    <div class="pageno">02 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">RFP 핵심 5줄 — 제안 의사결정에 필요한 정보만.</p>
+    <div class="grid4" style="margin-top: 16px;">
+      <div class="kpi"><div class="k">사업명</div><div class="v" style="font-size:16px;line-height:1.3;">차세대 AX무역플랫폼<br/>구축사업(1단계)</div></div>
+      <div class="kpi"><div class="k">사업기간</div><div class="v">계약 후 12개월</div></div>
+      <div class="kpi"><div class="k">추진과제</div><div class="v">8개 핵심 영역</div></div>
+      <div class="kpi"><div class="k">계약형태</div><div class="v">공동이행 공동수급 허용</div></div>
+    </div>
+    <div class="grid2" style="margin-top: 20px;">
+      <div class="card hl">
+        <h3>핵심 일정</h3>
+        <ul>
+          <li><b>5/26</b> 입찰 공고 · <b>6/2</b> 사업설명회</li>
+          <li><b>6/30 17:00</b> 제안서 접수 마감</li>
+          <li><b>7월 초</b> 평가위원회 · <b>7월 중순</b> 사업자 선정</li>
+          <li><b>7월 말</b> 프로젝트 착수</li>
+        </ul>
+      </div>
+      <div class="card hl">
+        <h3>낙찰 방식</h3>
+        <ul>
+          <li>기술 <b>80%</b> + 가격 <b>20%</b>, 70% 미만 부적격</li>
+          <li>최고득점 1순위와 기술·가격 협상(15영업일 내)</li>
+          <li>가격 = (최저가격 / 제안가격) × 배점</li>
+          <li>제안 설명회 시 <b>PM 직접 발표</b> 필수</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-foot"><span>차세대 AX무역플랫폼 구축사업(1단계) 사업설명회</span><span>2026.06.02</span></div>
+</section>
+
+<!-- ========== Slide 3: 추진 배경 ========== -->
+<section class="slide" data-slide="3">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Background</div>
+      <h2>추진 배경과 전략적 의의</h2>
+    </div>
+    <div class="pageno">03 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">분산된 무역 데이터·서비스를 통합하고, AI Agent 기반 지능형 수출지원 플랫폼으로 전환한다.</p>
+    <div class="grid3" style="margin-top: 22px;">
+      <div class="card">
+        <h3>왜 지금인가</h3>
+        <p>글로벌 무역 환경 변화(ESG·관세·디지털 무역)와 회원사 요구 수준 상승. 기존 사일로 구조로는 대응 한계.</p>
+      </div>
+      <div class="card">
+        <h3>무엇을 바꾸나</h3>
+        <p>산재된 데이터를 <b>통합데이터플랫폼(Trade Digital Brain)</b>으로 일원화, 대화형 <b>Multi-Agent</b> 환경으로 전 서비스 재구성.</p>
+      </div>
+      <div class="card">
+        <h3>어디까지 가나</h3>
+        <p>수출 준비 → 디지털 무역 연계 → 사후관리까지 <b>E2E 원스톱 지원</b>. 무역 생태계 허브 역할 정착.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 22px; background: var(--white); border-left: 4px solid var(--navy);">
+      <h3>사업 목표(3축)</h3>
+      <ul>
+        <li><b>Trade Agent</b> — 무역 특화 지능형 대화형 AI 서비스로 업무 전주기 지원</li>
+        <li><b>원스톱 E2E 통합 서비스</b> — tradeKorea·수출실적증명·무역아카데미·ESG·지재권 AI 도입 및 고도화</li>
+        <li><b>클라우드 인프라</b> — 랜딩존·공통 운영환경·보안체계 기반 고가용성·확장성 확보</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-foot"><span>출처: RFP I-2~3. 추진배경 및 사업목표</span><span>03 / 13</span></div>
+</section>
+
+<!-- ========== Slide 4: 8개 추진과제 ========== -->
+<section class="slide" data-slide="4">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Scope of Work — Phase 1</div>
+      <h2>1단계 추진범위 — 8개 핵심 과제</h2>
+    </div>
+    <div class="pageno">04 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">본 사업의 과업 경계. 8개 과제는 상호 연결되지만 평가·산출물 단위는 과제별로 구분된다.</p>
+    <div class="grid4" style="margin-top: 18px;">
+      <div class="card hl"><h3><span class="num">1</span>Trade Digital Brain</h3><p class="small">Data Lakehouse 기반 통합데이터플랫폼. 데이터 파이프라인·표준화·메타 관리·리니지·무역통계 전환 구축.</p></div>
+      <div class="card hl"><h3><span class="num">2</span>Trade Agent</h3><p class="small">Multi-Agent 통합 서비스. 의도·맥락 기반 오케스트레이션, 도메인 특화 Agent, RAG·벡터화.</p></div>
+      <div class="card hl"><h3><span class="num">3</span>맞춤형 통합대시보드</h3><p class="small">HS코드·관심국가·세그먼트 기반 개인화 위젯, 추천·알림(SMS·메신저·App Push).</p></div>
+      <div class="card hl"><h3><span class="num">4</span>KITA 멤버십 고도화</h3><p class="small">수출실적증명 신청·발급 AI 자동화(서류 추천·검증·리포트·반려문안 생성).</p></div>
+      <div class="card hl"><h3><span class="num">5</span>글로벌 지재권 서비스</h3><p class="small">지재권 확보·관리·활용 통합 지원. 유관기관 연계·분류체계·특화 콘텐츠·전담 화면.</p></div>
+      <div class="card hl"><h3><span class="num">6</span>tradeKorea + 전자무역</h3><p class="small">AI 바이어/셀러 매칭, 모바일 App 재구축, uTradeHub·LogisHub·PTB·해외세관 연계 설계.</p></div>
+      <div class="card hl"><h3><span class="num">7</span>ESG 규제대응 플랫폼</h3><p class="small">EU CSRD·CBAM·VSME 대응 진단, 약식 ESG 보고서(XBRL), 맞춤 규제정보·AI 상담.</p></div>
+      <div class="card hl"><h3><span class="num">8</span>차세대 무역아카데미</h3><p class="small">LMS·관리자 포털·모바일 학습·AI 튜터·KNEX/KAMIS 연계.</p></div>
+    </div>
+    <p class="small" style="margin-top: 16px;">※ 각 과제 산출물·요구사항(SER·FUR·DAR·TER 등)은 RFP Ⅲ장 참조. 8개 과제 모두 본 1단계 사업 범위.</p>
+  </div>
+  <div class="slide-foot"><span>출처: RFP I-4. 추진범위</span><span>04 / 13</span></div>
+</section>
+
+<!-- ========== Slide 5: AS-IS 시스템 지형도 ========== -->
+<section class="slide" data-slide="5">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">As-Is Landscape</div>
+      <h2>AS-IS 시스템 지형도</h2>
+    </div>
+    <div class="pageno">05 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">대외 서비스 13종 + 내부 시스템 5종 + 외부 데이터 소스 다수. <b>인프라 구성도는 보안상 비공개</b>(보안서약 후 방문 열람 가능).</p>
+    <div class="asismap" style="margin-top: 18px;">
+      <div class="group">
+        <h4>대외 서비스</h4>
+        <ul>
+          <li>무역통계 (운영계·개발계 별도)</li>
+          <li>KITA.net / kita.org(영문)</li>
+          <li>관세규제(TradeNAVI)</li>
+          <li>무역상담(TradePro)</li>
+          <li>KITA멤버십 / 증명서 발급</li>
+          <li>tradeKorea (B2B 매칭)</li>
+          <li>무역아카데미</li>
+          <li>FTA포털 / 수출역량진단</li>
+          <li>국제무역통상연구원</li>
+          <li>ABTC카드 / 이노브렌치</li>
+        </ul>
+      </div>
+      <div class="group">
+        <h4>내부 시스템</h4>
+        <ul>
+          <li>통합고객·사업마케팅 <b>KNEX</b></li>
+          <li>회원회비관리</li>
+          <li>KIWI (그룹웨어)</li>
+          <li>콜센터 / SR (유지보수)</li>
+          <li>KAMIS (정산) — 무역아카데미 연계</li>
+        </ul>
+      </div>
+      <div class="group">
+        <h4>외부 데이터 소스</h4>
+        <ul>
+          <li>통계청 / 관세청 (CD)</li>
+          <li>IMF / ITC TradeMap / Eurostat</li>
+          <li>U.S. Census / Stats Canada / JTAS</li>
+          <li>ETCN (FTP) / Stats NZ</li>
+          <li>Philippines Stats (이메일)</li>
+          <li>uTradeHub / LogisHub (전자무역)</li>
+          <li>해외세관 (연계 설계 대상)</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small" style="margin-top: 16px;">※ H/W: NetApp 통합스토리지(140TB), Oracle/Tibero DB, RHEL·Solaris·VMware. SW: 전자정부 프레임워크, UDAP, Jeus·Tomcat·WebLogic, Jenkins·SVN·Git. <b>JDK 1.8</b> 운영 중.</p>
+  </div>
+  <div class="slide-foot"><span>출처: RFP Ⅱ-1, 2. 업무·정보시스템 현황</span><span>05 / 13</span></div>
+</section>
+
+<!-- ========== Slide 6: AS-IS 데이터·연계 난이도 ========== -->
+<section class="slide" data-slide="6">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Integration Complexity</div>
+      <h2>AS-IS 데이터·연계 난이도</h2>
+    </div>
+    <div class="pageno">06 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">내부 6종 + 외부 11종 연계가 이미 동작 중. <b>방식·주기·소유권이 제각각</b>이라 통합 데이터 레이어 재설계가 본 사업의 코어 난제.</p>
+    <div class="row" style="margin-top: 16px; gap: 24px;">
+      <div class="col">
+        <table class="t compact">
+          <thead><tr><th>연계 시스템</th><th>방식</th><th>주기</th></tr></thead>
+          <tbody>
+            <tr><td>KITA.net</td><td>직접연결 / DB Link</td><td>수시</td></tr>
+            <tr><td>KITA멤버십</td><td>직접연결 / DB Link</td><td>수시</td></tr>
+            <tr><td>KNEX (마케팅)</td><td>ETL / DB Link</td><td>매일·매월·수시</td></tr>
+            <tr><td>수출역량진단</td><td>ETL</td><td>매월</td></tr>
+            <tr><td>ABTC·회원회비·국내외지부</td><td>DB Link / 직접</td><td>수시</td></tr>
+            <tr><td>통계청 / 관세청</td><td>직접연결 / CD</td><td>매월</td></tr>
+            <tr><td>해외 통계 11개국</td><td>크롤링·다운로드·FTP·이메일</td><td>매월·매년</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <h3 style="margin-top: 4px;">난도 포인트</h3>
+        <ul>
+          <li><b>이질적 연계 방식</b> 혼재 — ETL·DB Link·크롤링·이메일·CD까지 공존</li>
+          <li><b>JDK 1.8 / Solaris / Tibero</b> 등 레거시 스택과 신규 클라우드 환경 공존</li>
+          <li><b>KITA.net SSO ↔ 신규 플랫폼</b> 인증 연결 및 회원사·비회원사·관리자 경로 분리 설계 필요</li>
+          <li><b>무역통계 운영·개발계 분리</b> 구조 — 전환 구축 시 무중단 운영 필수</li>
+          <li>인프라 구성도 비공개 — <b>보안서약 후 방문 열람</b>으로 사전 확인 필요</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-foot"><span>출처: RFP Ⅱ-3. 데이터 연계 현황</span><span>06 / 13</span></div>
+</section>
+
+<!-- ========== Slide 7: TO-BE 원칙 ========== -->
+<section class="slide" data-slide="7">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Target Architecture Principles</div>
+      <h2>TO-BE 아키텍처 원칙</h2>
+    </div>
+    <div class="pageno">07 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">RFP는 구체적 블록도가 아닌 <b>원칙·요구사항 수준</b>으로 TO-BE를 정의. 아래 6개 원칙이 설계·평가의 축.</p>
+    <div class="grid3" style="margin-top: 18px; row-gap: 14px;">
+      <div class="princ"><div class="n">01</div><div class="t">Data Lakehouse 일원화</div><div class="d">산재 데이터를 통합 데이터 플랫폼으로 모으고 AI Data Hub 구성. 표준화·메타·리니지 일관 적용.</div></div>
+      <div class="princ"><div class="n">02</div><div class="t">Multi-Agent Orchestration</div><div class="d">의도·맥락 파싱 → 작업 흐름 조정 → 도메인 Agent 호출. Master/Orchestration/도메인 Agent 계층화.</div></div>
+      <div class="princ"><div class="n">03</div><div class="t">Cloud Native + 랜딩존</div><div class="d">클라우드 랜딩존·공통 운영환경·보안체계. 확장성·민첩성·고가용성 확보.</div></div>
+      <div class="princ"><div class="n">04</div><div class="t">SSO·통합 인증</div><div class="d">KITA.net SSO 중심 인증 통합. 회원사·비회원사·관리자 경로 분리. MFA·토큰 갱신 정책 강화.</div></div>
+      <div class="princ"><div class="n">05</div><div class="t">개인화 · 추천 · 알림</div><div class="d">관심분야·행동로그 기반 개인화. SMS/메신저/App Push 다채널 알림 체계.</div></div>
+      <div class="princ"><div class="n">06</div><div class="t">표준 · 보안 · 시큐어코딩</div><div class="d">전자정부 프레임워크 호환, LLM 데이터 접근 보안, Agent 보안 취약점 점검, 시큐어코딩 의무.</div></div>
+    </div>
+  </div>
+  <div class="slide-foot"><span>출처: RFP I-3 사업목표, Ⅲ-3 보안·아키텍처 요구사항(요약)</span><span>07 / 13</span></div>
+</section>
+
+<!-- ========== Slide 8: 솔루션 접점 ========== -->
+<section class="slide" data-slide="8">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Solution Touch Points</div>
+      <h2>TO-BE 영역과 솔루션 카테고리</h2>
+    </div>
+    <div class="pageno">08 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">8개 과제를 솔루션 카테고리 관점에서 재배열. 본 사업은 <b>SI 단독 수행 어려움</b> — 솔루션사 참여 가능 영역을 미리 표시.</p>
+    <table class="t compact solfit" style="margin-top: 14px;">
+      <thead>
+        <tr><th>아키텍처 영역</th><th>요구 기능</th><th>관련 과제</th><th>참여 형태</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="area">데이터 플랫폼</td>
+          <td>Data Lakehouse, ETL/ELT, 메타·리니지, 품질관리, 카탈로그</td>
+          <td>① Trade Digital Brain</td>
+          <td class="tag"><span class="badge sol">솔루션</span> <span class="badge si">SI</span></td>
+        </tr>
+        <tr>
+          <td class="area">AI / LLM Agent</td>
+          <td>Multi-Agent Orchestration, RAG, Vector DB, LLM 모델 운영·보안</td>
+          <td>② Trade Agent ⑦ ESG</td>
+          <td class="tag"><span class="badge sol">솔루션</span> <span class="badge si">SI</span></td>
+        </tr>
+        <tr>
+          <td class="area">검색 엔진</td>
+          <td>KITA.net 검색 품질 개선, 신규 검색 솔루션, Agent 연계</td>
+          <td>③ 대시보드 ② Agent</td>
+          <td class="tag"><span class="badge sol">솔루션</span></td>
+        </tr>
+        <tr>
+          <td class="area">통합·연계 (iPaaS·API GW)</td>
+          <td>uTradeHub·LogisHub·PTB·KNEX·KAMIS·해외세관 연계, 표준 API</td>
+          <td>⑥ tradeKorea·전자무역 ⑧ 아카데미</td>
+          <td class="tag"><span class="badge si">SI</span> <span class="badge sol">솔루션</span></td>
+        </tr>
+        <tr>
+          <td class="area">OCR · 문서 자동화</td>
+          <td>증빙서류 인식·정합성 검증, AI Risk Score 산출</td>
+          <td>④ 멤버십 (수출실적증명)</td>
+          <td class="tag"><span class="badge sol">솔루션</span></td>
+        </tr>
+        <tr>
+          <td class="area">LMS</td>
+          <td>온·오프라인 통합 학습, 모바일 LMS, AI 튜터</td>
+          <td>⑧ 무역아카데미</td>
+          <td class="tag"><span class="badge sol">솔루션</span></td>
+        </tr>
+        <tr>
+          <td class="area">알림·메시징 채널</td>
+          <td>SMS·메신저·App Push 다채널 발송, 우선순위 제어</td>
+          <td>③ 대시보드</td>
+          <td class="tag"><span class="badge sol">솔루션</span></td>
+        </tr>
+        <tr>
+          <td class="area">클라우드 인프라·보안</td>
+          <td>랜딩존, 컨테이너 운영, 접근제어(서버·DB), 시큐어코딩 점검</td>
+          <td>전체</td>
+          <td class="tag"><span class="badge si">SI</span> <span class="badge sol">솔루션</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="small" style="margin-top: 12px;">※ 참여 형태는 권장 조합. 공동수급체 구성 시 본 표를 참고해 컨소시엄 설계 가능.</p>
+  </div>
+  <div class="slide-foot"><span>참고: RFP 추진범위 + 보안·연계 요구사항 종합</span><span>08 / 13</span></div>
+</section>
+
+<!-- ========== Slide 9: 컨소시엄 ========== -->
+<section class="slide" data-slide="9">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Consortium & Eligibility</div>
+      <h2>컨소시엄·참여자격</h2>
+    </div>
+    <div class="pageno">09 / 13</div>
+  </div>
+  <div class="slide-body">
+    <div class="grid2" style="margin-top: 4px;">
+      <div>
+        <h3>참여자격 (입찰 참가 기본 조건)</h3>
+        <ul>
+          <li>국가계약법 시행령 제76조 부정당업자 제재 미해당</li>
+          <li>신용평가등급 — 회사채 <b>BB-</b> 이상 / 기업어음 <b>B0</b> 이상 / 기업신용평가 <b>BB-</b> 이상 중 1</li>
+          <li>제안 공고일 기준 휴업·영업정지·인허가 취소 등 행정처분 중 업체 참여 불가(하도급 포함)</li>
+        </ul>
+
+        <h3 style="margin-top: 18px;">공동수급 (컨소시엄)</h3>
+        <ul>
+          <li>공동이행 방식만 허용 — <b>분담이행 불가</b></li>
+          <li>구성원 전원이 입찰참가자격 충족 필수</li>
+          <li>구성원 연대 책임. PM은 <b>주사업자 소속·공고일 이전 재직</b>자</li>
+          <li>PL은 주사업자 또는 공동수급체 소속 직원</li>
+        </ul>
+      </div>
+      <div>
+        <h3>하도급 규칙</h3>
+        <ul>
+          <li>하도급 시 <b>발주기관 사전 승인</b> 필수</li>
+          <li>물품(상용 SW) 제외 SW사업금액의 <b>50% 초과 불가</b></li>
+          <li>재하도급 원칙적 불허</li>
+          <li>하도급 비율 <b>10% 초과</b> 시 공동수급체 구성원 참여 가능 — 즉 솔루션사를 공동수급체로 끌어올리는 구조 권장</li>
+        </ul>
+
+        <h3 style="margin-top: 18px;">투입인력 원칙</h3>
+        <ul>
+          <li><b>상주 원칙</b> — 비상주는 명확한 사유 명시, 불명확 시 공수 제외</li>
+          <li>제안 인력 임의 변경 불가. 교체 시 동급 이상·5일 인계인수</li>
+          <li>타 과제 중복 투입 인력은 기술평가 대상 제외</li>
+          <li>"~할 수 있다" 등 <b>모호 표현은 불가능으로 간주</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-foot"><span>출처: RFP I-5 참가자격, Ⅳ-1·2 인력·하도급 요건</span><span>09 / 13</span></div>
+</section>
+
+<!-- ========== Slide 10: 평가기준 ========== -->
+<section class="slide" data-slide="10">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Evaluation Criteria</div>
+      <h2>평가기준·배점</h2>
+    </div>
+    <div class="pageno">10 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">기술 80% + 가격 20%. <b>종합 70% 미만 부적격</b>. 기술평가는 최고·최저점 제외 평균.</p>
+    <div class="row" style="margin-top: 14px; gap: 28px;">
+      <div class="col">
+        <table class="t compact">
+          <thead><tr><th>평가부문</th><th>주요 항목</th><th class="num">배점</th></tr></thead>
+          <tbody>
+            <tr><td>전략 및 방법론</td><td>사업이해도·추진전략·적용기술·표준 프레임워크·개발방법론</td><td class="num">15</td></tr>
+            <tr><td>기술 및 기능</td><td>시스템·기능·보안·데이터·운영·제약사항 요구</td><td class="num">25</td></tr>
+            <tr><td>성능 및 품질</td><td>성능·품질·인터페이스(시스템·사용자) 요구</td><td class="num">15</td></tr>
+            <tr><td>프로젝트 관리</td><td>관리방법론·일정 계획·개발 장비</td><td class="num">15</td></tr>
+            <tr><td>프로젝트 지원</td><td>품질보증·시험운영·교육·유지관리·하자보수·기밀보안·비상대책</td><td class="num">20</td></tr>
+            <tr><td>조직 및 인력</td><td>경영상태·유사 수행경험·수행조직·참여인력</td><td class="num">10</td></tr>
+            <tr><td><b>기술 합계</b></td><td></td><td class="num"><b>100 → ×80%</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <h3>가격 평가</h3>
+        <ul>
+          <li>가격 점수 = <b>(최저가격 / 평가대상자 제안가격) × 배점</b></li>
+          <li>가중치 <b>20%</b></li>
+          <li>예정 가격 초과 시 협상 진행(15영업일 이내)</li>
+        </ul>
+        <h3 style="margin-top: 16px;">가점 가능 요소</h3>
+        <ul>
+          <li><b>SP인증</b>(소프트웨어 프로세스 품질인증) 보유 시 우대 가능</li>
+          <li>유사 분야 최근 3년 사업실적</li>
+          <li>참여인력 유사사업 경험·기술수준</li>
+        </ul>
+        <h3 style="margin-top: 16px;">동점 처리</h3>
+        <p class="small">기술평가 고득점 → 기술 및 기능 부문 고득점자 우선.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-foot"><span>출처: RFP I-5 평가기준, 붙임1 기술평가기준표</span><span>10 / 13</span></div>
+</section>
+
+<!-- ========== Slide 11: 추진 일정 ========== -->
+<section class="slide" data-slide="11">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Schedule</div>
+      <h2>추진 일정·마일스톤</h2>
+    </div>
+    <div class="pageno">11 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">입찰 단계 5개 마일스톤 + 구축 단계 12개월. <b>오늘은 사업설명회 시점</b>.</p>
+    <div class="timeline">
+      <div class="step"><div class="date">5/26</div><div class="label">입찰 공고</div></div>
+      <div class="step now"><div class="date">6/2</div><div class="label">사업설명회<br/><span class="small">(오늘)</span></div></div>
+      <div class="step"><div class="date">~6/30 17:00</div><div class="label">제안서 접수</div></div>
+      <div class="step"><div class="date">7월 초</div><div class="label">평가위원회</div></div>
+      <div class="step"><div class="date">7월 중순</div><div class="label">사업자 선정<br/><span class="small">우선협상·기술/가격</span></div></div>
+      <div class="step"><div class="date">7월 말</div><div class="label">프로젝트 착수</div></div>
+    </div>
+    <div class="grid2" style="margin-top: 28px;">
+      <div class="card">
+        <h3>제안서 제출</h3>
+        <ul>
+          <li>온라인 1부 — <b>bid.kita.net</b>전자입찰</li>
+          <li>방문/우편 9부 (보관 1·평가 8) — <b>방문 제출 필수</b></li>
+          <li>입찰보증금: 입찰가의 <b>5/100 이상</b> (보증보험 대체 가능)</li>
+          <li>가격제안 입력 일정: 마감 후 SMS·메일 개별 안내</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>구축 일정</h3>
+        <ul>
+          <li>예상 수행 기간: <b>12개월 이내</b></li>
+          <li>우선협상대상자와 상세 일정 확정</li>
+          <li>기간 연장·개발 방식 변경 필요 시 별도 제안 가능</li>
+          <li>주간·월간 진척 보고 의무</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-foot"><span>출처: RFP I-8 추진 일정</span><span>11 / 13</span></div>
+</section>
+
+<!-- ========== Slide 12: 제약·유의사항 ========== -->
+<section class="slide" data-slide="12">
+  <div class="slide-head">
+    <div>
+      <div class="eyebrow">Constraints & Caveats</div>
+      <h2>제약·유의사항 (3가지)</h2>
+    </div>
+    <div class="pageno">12 / 13</div>
+  </div>
+  <div class="slide-body">
+    <p class="lead">자주 이슈되는 조건 3가지. 제안서 작성·내부 의사결정 전에 반드시 확인.</p>
+    <div class="grid3" style="margin-top: 22px;">
+      <div class="cons">
+        <h4>① 보안 — 인프라 구성도 비공개</h4>
+        <p>현 인프라 구성도는 보안 지침으로 RFP에 미포함. 제안서 작성에 필요 시 <b>보안서약서 작성 후 협회 방문</b>으로만 열람 가능. 일정 여유 확보 필요.</p>
+      </div>
+      <div class="cons">
+        <h4>② 상주 원칙 + 인력 변경 제약</h4>
+        <p>투입인력은 <b>상주가 원칙</b>. 비상주 사유 불명확 시 공수 제외. 제안 인력 임의 변경 불가, 교체 시 동급 이상·5일 인계인수 의무·교체 인건비 사업자 부담.</p>
+      </div>
+      <div class="cons">
+        <h4>③ 표현·산출물 엄격성</h4>
+        <p>"~할 수 있다·예정이다·고려한다" 등 모호 표현은 <b>불가능으로 간주</b>. 제안 설명회 시 <b>PM 직접 발표</b> 필수. 제출 산출물·솔루션은 상거래·법률 하자 없을 것.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 22px; border-left: 4px solid var(--danger); background: #FFF5F5;">
+      <h3 style="color: var(--danger);">기타 핵심 의무</h3>
+      <ul>
+        <li>지적재산권 — 본 사업 산출물 소유권은 협회로 귀속</li>
+        <li>하자보증 — 검사완료일로부터 <b>1년</b></li>
+        <li>보안각서 — 투입 전원 제출, 정기 보안교육</li>
+        <li>참여 인력 이력증빙(고용보험 납입내역 등) 선정 후 제출</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-foot"><span>출처: RFP Ⅳ. 제안 준수 사항</span><span>12 / 13</span></div>
+</section>
+
+<!-- ========== Slide 13: Q&A · Contact ========== -->
+<section class="slide closing" data-slide="13">
+  <div class="accent-bar"></div>
+  <h1>Q&amp;A</h1>
+  <div class="sub" style="font-size: 22px; opacity: 0.9;">질의는 본 설명회 현장 또는 아래 접촉 채널로</div>
+  <div class="contact">
+    <div><div class="k">담당</div><div class="v">차세대무역플랫폼 TF · 최원혁 과장</div></div>
+    <div><div class="k">Email</div><div class="v">wh.choi@kita.or.kr</div></div>
+    <div><div class="k">Tel</div><div class="v">02-6000-5604</div></div>
+    <div><div class="k">주소</div><div class="v">서울시 강남구 영동대로 511, 506호</div></div>
+    <div><div class="k">전자입찰</div><div class="v">bid.kita.net</div></div>
+    <div><div class="k">제안 마감</div><div class="v">2026. 6. 30.(화) 17:00</div></div>
+  </div>
+  <p class="small" style="margin-top: 36px; opacity: 0.7;">방문 상담 가능. 추가 자료 요청은 위 이메일로.</p>
+</section>
+
+</div>
+
+<div class="progress"><i id="bar"></i></div>
+<div class="nav">
+  <button id="prev" aria-label="이전">‹</button>
+  <span class="pageind" id="ind">1 / 13</span>
+  <button id="next" aria-label="다음">›</button>
+</div>
+
+<script>
+(function () {
+  const slides = document.querySelectorAll('.slide');
+  const bar = document.getElementById('bar');
+  const ind = document.getElementById('ind');
+  const total = slides.length;
+  let idx = 0;
+  function go(n) {
+    idx = Math.max(0, Math.min(total - 1, n));
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    bar.style.width = ((idx + 1) / total * 100) + '%';
+    ind.textContent = (idx + 1) + ' / ' + total;
+    if (location.hash !== '#' + (idx + 1)) history.replaceState(null, '', '#' + (idx + 1));
+  }
+  document.getElementById('prev').onclick = () => go(idx - 1);
+  document.getElementById('next').onclick = () => go(idx + 1);
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(idx + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(idx - 1); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(total - 1);
+    else if (/^[1-9]$/.test(e.key)) go(parseInt(e.key, 10) - 1);
+  });
+  // hash deep-link
+  const h = parseInt(location.hash.replace('#',''), 10);
+  go(Number.isFinite(h) && h >= 1 ? h - 1 : 0);
+})();
+</script>
+</body>
+</html>
